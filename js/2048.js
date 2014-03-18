@@ -1,8 +1,9 @@
 /*
  * Bot for http://gabrielecirulli.github.io/2048/
  * Usage: Add this as a bookmark: 
- * javascript:(function() {var s =document.createElement("script");s.src="http://both00z.github.io/js/2048.js";document.getElementsByTagName('head')[0].appendChild(s);s.addEventListener('load',function(e){solve(4,5,2);},false);}());
- * On the game page, open the bookmark
+ * javascript:(function(){var s=document.createElement("script");s.src="http://both00z.github.io/js/2048.js";document.getElementsByTagName('head')[0].appendChild(s);s.addEventListener('load',function(e){solve(4,5,2);},false);}());
+ * On the game page, click the bookmark.
+ * Tested on Chrome
  */
 
 var getNextBoard = function (currentBoard, dir) {
