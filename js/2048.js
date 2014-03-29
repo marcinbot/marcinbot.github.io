@@ -315,6 +315,8 @@ var solve = function (size, maxLookAhead, maxRandomPredict) {
 		
 		if (maxDir) {
 			var e = new Event('keydown');
+			e.initEvent('keydown', true, true);
+			
 			switch (maxDir){
 				case 'left':
 					e.which = 37;
@@ -330,7 +332,7 @@ var solve = function (size, maxLookAhead, maxRandomPredict) {
 					break;
 			}
 			
-			document.dispatchEvent(e);
+			document.body.dispatchEvent(e);
 			solve(size, maxLookAhead, maxRandomPredict);
 		} else {
 			console.log('no more moves?');
