@@ -1,0 +1,190 @@
+<html>
+	<head>
+		<title>Floodit</title>
+		<!-- Original: http://floodit.appspot.com/ -->
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+		<style>
+		#content {
+			max-width: 420px;
+			margin: 0 auto;
+		}
+		
+		#board {
+			max-width: 420px;
+			max-width: 420px;
+			margin-bottom: 10px;
+		}
+		
+		#board div {
+			display: inline-block;
+			width: 30px;
+			height: 30px;
+		}
+		
+		#controls a {
+			display: inline-block;
+			width: 70px;
+			height: 70px;
+		}
+		
+		#turn {
+			color: #6E352C;
+			font-weight: bold;
+			font-family: "Helvetica Neue", Arial, sans-serif;
+			text-align: center;
+			margin: 0;
+		} 
+		</style>
+	</head>
+	<body>
+		<div id="content">
+			<div id="controls"></div>
+			<p id="turn"></p>
+			<div id="board"></div>
+		</div>
+		
+		<script>
+			var state = {
+				over: false,
+				turn: 0
+			},
+				maxTurns = 25,
+				colors = ['#6E352C', '#CF5230', '#F59A44', '#E3C598', '#8A6E64', '#6E612F'];
+				//controlSize = 30,
+				//fieldSize = 30;
+		
+			var renderBoard = function (board) {
+				var $board = $('#board'),
+					size = board.length,
+					fieldSize = Math.floor($board.width() / 14);
+					
+				console.log
+				
+				$board.empty();
+				
+				for (var x = 0; x < size; x++) {
+					for (var y = 0; y < size; y++) {
+						$board.append($('<div>')
+							.css('background-color', colors[board[x][y].color])
+							.css('width', fieldSize + 'px')
+							.css('height', fieldSize + 'px'));
+					}
+				}
+			}
+		
+			var unvisitAllAndCheckWin = function (board) {
+				var size = board.length,
+					color = board[0][0].color,
+					won = true;
+					
+				for (var x = 0; x < size; x++) {
+					for (var y = 0; y < size; y++) {
+						if (won && board[x][y].color != color) {
+							won = false;
+						} 
+					
+						board[x][y].visited = false;
+					}
+				}
+				
+				if (won) {
+					alert('you won');
+					state.over = true;
+				}
+			}
+		
+			var setFieldColor = function (board, x, y, newColor) {
+				var currentColor = board[x][y].color,
+					size = board.length,
+					adjacent = [[x-1, y], [x+1, y], [x, y-1], [x, y+1]];
+					
+				board[x][y].visited = true;
+				
+				for (var i = 0; i < adjacent.length; i++) {
+					var a = adjacent[i];
+					if (a[0] < 0 || a[0] > size - 1 || a[1] < 0 || a[1] > size - 1) {
+						continue;
+					}
+					
+					var adjField = board[a[0]][a[1]];
+					if (adjField.visited || adjField.color != currentColor) {
+						continue;
+					}
+					
+					setFieldColor(board, a[0], a[1], newColor);
+				}
+				
+				board[x][y].color = newColor;
+			} 
+					
+			$(document).ready(function() {
+				var board = [],
+					$board = $('#board'),
+					$controls = $('#controls'),
+					$turn = $('#turn');
+					
+				renderControls = function () {
+					$controls.empty();
+				
+					var controlSize = Math.floor($controls.width() / 6);
+					
+					for (var i = 0; i < colors.length; i++) {			
+						var $a = $('<a>', { 'href':'#' })
+							.css('background-color', colors[i])
+							.css('width', controlSize + 'px')
+							.css('height', controlSize + 'px')
+							.data('cIndex', i)
+							.click(function (e) {
+								e.preventDefault();
+								if (state.over) {
+									return;
+								}
+								
+								var cIndex = $(e.currentTarget).data('cIndex');
+								if (cIndex == board[0][0].color) {
+									return;
+								}
+								
+								state.turn++;
+								$turn.text(state.turn + '/' + maxTurns);
+								
+								setFieldColor(board, 0, 0, cIndex);
+								renderBoard(board);
+								unvisitAllAndCheckWin(board);
+								
+								if (!state.over && state.turn == maxTurns) {
+									state.over = true;
+									alert('you lost');
+								}
+							});
+					
+						$controls.append($a);
+					}
+				}
+				
+				renderControls();
+					
+				for (var x = 0; x < 14; x++) {
+					var row = [];
+					for (var y = 0; y < 14; y++) {
+						row.push({
+							visited: false,
+							color: Math.floor(Math.random() * 6)
+						});
+					}
+					
+					board.push(row);
+				}
+				
+				$(window).resize(function () {
+					renderControls();
+					renderBoard(board);
+				});
+				
+				$turn.text(state.turn + '/' + maxTurns);
+				
+				renderBoard(board);
+			});
+		</script>
+	</body>
+</html>
