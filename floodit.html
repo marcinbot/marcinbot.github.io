@@ -36,7 +36,7 @@
 			display: inline-block;
 			width: 70px;
 			height: 70px;
-			margin-right: 5px;
+			margin: 0 5px;
 			border-radius: 5px;
 		}
 		
@@ -45,6 +45,7 @@
 			width: 100%;
 			color: #6E352C;
 			margin-bottom: 10px;
+			padding-left: 5px;
 		}
 		
 		#data a {
@@ -273,7 +274,7 @@
 				renderControls = function () {
 					$controls.empty();
 				
-					var controlSize = Math.floor($controls.width() / 6) - 5;
+					var controlSize = Math.floor($controls.width() / 6) - 10;
 					
 					for (var i = 0; i < colors.length; i++) {			
 						var $a = $('<a>', { 'href':'#' })
