@@ -1,7 +1,6 @@
 <html>
 	<head>
 		<title>Floodit</title>
-		<!-- Original: http://floodit.appspot.com/ -->
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 		<style>
 		#content {
@@ -11,36 +10,127 @@
 		
 		#board {
 			max-width: 420px;
-			max-width: 420px;
-			margin-bottom: 10px;
+			max-height: 420px;
+			margin: 10px 0;
 		}
 		
 		#board div {
 			display: inline-block;
 			width: 30px;
 			height: 30px;
+			margin: 0;
+			padding: 0;
+			border: none;
+		}
+		
+		#board-container {
+			position: relative;
 		}
 		
 		#controls a {
 			display: inline-block;
 			width: 70px;
 			height: 70px;
+			margin-right: 5px;
+			border-radius: 5px;
+		}
+		
+		#data {
+			display: inline-block;
+			width: 100%;
+			color: #6E352C;
+			font-weight: bold;
+			font-family: "Helvetica Neue", Arial, sans-serif;
+			margin-bottom: 10px;
+		}
+		
+		#data a {
+			display: block;
+			float: left;
+			background: #6E352C;
+			color: #E3C598;
+			text-decoration: none;
+			padding: 5px;
+			border-radius: 5px;
+			margin-right: 10px;
 		}
 		
 		#turn {
+			display: block;
+			margin: 5px 0;
+			text-align:	center;
+			float: left;
+		}
+		
+		#best {
+			display: block;
+			float: right;
+			margin: 5px 0;
+		}
+		
+		.message {
+			display: none;
+			opacity: 0;
+			transition: opacity 2s;
+			position: absolute;
+			width: 100%;
+			height: 100%;			
+			left:0;
+			top:0;
+			z-index: 100;
+		}
+		
+		.message .bg {
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			background: #E3C598;
+			opacity: 0.5;
+			left:0;
+			top:0;
+			z-index: 200;
+		}
+		
+		.message .cont {
+			position: absolute;
+			left:50%;
+			top:50%;
+			z-index: 300;
 			color: #6E352C;
 			font-weight: bold;
 			font-family: "Helvetica Neue", Arial, sans-serif;
 			text-align: center;
-			margin: 0;
-		} 
+		}
+		
+		.message a {
+			display: inline-block;
+			background: #6E352C;
+			color: #E3C598;
+			text-decoration: none;
+			padding: 5px;
+			border-radius: 5px;
+		}
+		
 		</style>
 	</head>
 	<body>
 		<div id="content">
-			<div id="controls"></div>
-			<p id="turn"></p>
-			<div id="board"></div>
+			<div id="interactive">
+				<div id="data">
+					<a href="#" class="newgame">new game</a>
+					<a href="#" id="helpBtn">help</a>
+					<div id="turn"></div>
+					<!--div id="best">Best: n/a</div-->
+				</div>	
+				<div id="controls"></div>
+			</div>
+			<div id="board-container">
+				<div id="board"></div>
+				<div id="win" class="message"><div class="bg"></div><div class="cont" style="width: 202px; height: 50px; margin-left: -101px; margin-top: -25px;">Congratulations! You won!<br/><a href="#" class="newgame">new game</a></div></div>
+				<div id="loss" class="message"><div class="bg"></div><div class="cont" style="width: 88px; height: 50px; margin-left: -44px; margin-top: -25px;">You lost.<br/><a href="#" class="newgame">new game</a></div></div>
+				<div id="helpMsg" class="message"><div class="bg"></div><div class="cont" style="width: 254px; height: 214px; margin-left: -127px; margin-top: -107px;"><p>Using the buttons above, change the color of the field in the top-left corner.</p><p>The goal is to fill the entire board with only one color in 25 turns or less</p><p><a href="#" class="msgclose">ok</a></p></div></div>
+			</div>
+			<p>Original: <a href="http://floodit.appspot.com/">floodit.appspot.com</a></p>
 		</div>
 		
 		<script>
@@ -57,8 +147,6 @@
 				var $board = $('#board'),
 					size = board.length,
 					fieldSize = Math.floor($board.width() / 14);
-					
-				console.log
 				
 				$board.empty();
 				
@@ -70,6 +158,15 @@
 							.css('height', fieldSize + 'px'));
 					}
 				}
+			}
+			
+			var hideMessages = function () {
+				$('.message').hide().css('opacity', '0');
+			}
+			
+			var showMessage = function ($msg) {
+				hideMessages();
+				$msg.show().animate({opacity: 1}, 100);				
 			}
 		
 			var unvisitAllAndCheckWin = function (board) {
@@ -88,9 +185,27 @@
 				}
 				
 				if (won) {
-					alert('you won');
+					showMessage($('#win'));
 					state.over = true;
 				}
+			}
+			
+			var initRandomBoard = function () {
+				var board = [];
+			
+				for (var x = 0; x < 14; x++) {
+					var row = [];
+					for (var y = 0; y < 14; y++) {
+						row.push({
+							visited: false,
+							color: Math.floor(Math.random() * 6)
+						});
+					}
+					
+					board.push(row);
+				}
+				
+				return board;
 			}
 		
 			var setFieldColor = function (board, x, y, newColor) {
@@ -118,15 +233,46 @@
 			} 
 					
 			$(document).ready(function() {
-				var board = [],
+				var board = initRandomBoard(),
 					$board = $('#board'),
 					$controls = $('#controls'),
 					$turn = $('#turn');
 					
+				$('.newgame').click(function(e) {
+					e.preventDefault();
+				
+					board = initRandomBoard();
+					state = {
+						over: false,
+						turn: 0
+					};
+					$turn.text(state.turn + '/' + maxTurns);
+					renderBoard(board);
+					
+					hideMessages();
+				});
+				
+				$('.msgclose').click(function(e) {
+					e.preventDefault();
+					
+					hideMessages();
+				});
+				
+				$('#helpBtn').click(function(e) {
+					e.preventDefault();
+					
+					if ($('#helpMsg').is(':visible')) {
+						hideMessages();
+						return;
+					}
+					
+					showMessage($('#helpMsg'));
+				});
+					
 				renderControls = function () {
 					$controls.empty();
 				
-					var controlSize = Math.floor($controls.width() / 6);
+					var controlSize = Math.floor($controls.width() / 6) - 5;
 					
 					for (var i = 0; i < colors.length; i++) {			
 						var $a = $('<a>', { 'href':'#' })
@@ -154,7 +300,7 @@
 								
 								if (!state.over && state.turn == maxTurns) {
 									state.over = true;
-									alert('you lost');
+									showMessage($('#loss'));
 								}
 							});
 					
@@ -163,18 +309,6 @@
 				}
 				
 				renderControls();
-					
-				for (var x = 0; x < 14; x++) {
-					var row = [];
-					for (var y = 0; y < 14; y++) {
-						row.push({
-							visited: false,
-							color: Math.floor(Math.random() * 6)
-						});
-					}
-					
-					board.push(row);
-				}
 				
 				$(window).resize(function () {
 					renderControls();
