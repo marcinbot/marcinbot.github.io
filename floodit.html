@@ -454,7 +454,8 @@
 					cookie = document.cookie,
 					schemaMatch = cookie.match(/schema=(.+?)(;|$)/),
 					schema = schemaMatch ? schemaMatch[1] : 'autumn';
-					
+				
+				$('#schemeSelect').val(schema)
 				setBodyClass(schema);
 					
 				$('#schemeSelect').change(function (e) {
