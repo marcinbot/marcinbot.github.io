@@ -189,7 +189,8 @@
 		}
 		
 		#board div {
-			display: inline-block;
+			display: block;
+			float: left;
 			width: 30px;
 			height: 30px;
 			margin: 0;
@@ -324,10 +325,6 @@
 									.css('width', fieldSize + 'px')
 									.css('height', fieldSize + 'px');
 					
-					if (i % (boardSize - 1) == 0) {
-						$div.css('clear', 'right');
-					}
-					
 					$board.append($div);
 				}
 			}
@@ -408,7 +405,7 @@
 						continue;
 					}
 					
-					if (fI % (boardSize-1) == 0 && fI != 0 && i == 1) {
+					if (fI % boardSize == (boardSize - 1) && fI != 0 && i == 1) {
 						continue;
 					}
 				
