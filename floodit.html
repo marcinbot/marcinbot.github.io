@@ -4,8 +4,174 @@
 		
 		<meta name="viewport" content="width=device-width">
 		
-		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 		<style>
+		body.sea .color0 {
+			background-color: #113675;
+		}
+		
+		body.sea .color1 {
+			background-color: #1571d9;
+		}
+		
+		body.sea .color2 {
+			background-color: #9673c7;
+		}
+		
+		body.sea .color3 {
+			background-color: #eb4646;
+		}
+		
+		body.sea .color4 {
+			background-color: #fcd279;
+		}
+		
+		body.sea .color5 {
+			background-color: #3d393d;
+		}
+		
+		body.sea .message .bg {
+			background: #fcd279;
+		}
+		
+		body.sea #data {
+			color: #3d393d;
+		}
+		
+		body.sea a.btn {
+			background: #3d393d;
+			color: #fcd279;
+		}
+		
+		body.sea .message .cont {
+			color: #3d393d;
+		}		
+		
+		body.autumn .color0 {
+			background-color: #6E352C;
+		}
+		
+		body.autumn .color1 {
+			background-color: #CF5230;
+		}
+		
+		body.autumn .color2 {
+			background-color: #F59A44;
+		}
+		
+		body.autumn .color3 {
+			background-color: #E3C598;
+		}
+		
+		body.autumn .color4 {
+			background-color: #8A6E64;
+		}
+		
+		body.autumn .color5 {
+			background-color: #6E612F;
+		}
+		
+		body.autumn .message .bg {
+			background: #E3C598;
+		}
+		
+		body.autumn #data {
+			color: #6E352C;
+		}
+		
+		body.autumn a.btn {
+			background: #6E352C;
+			color: #E3C598;
+		}
+		
+		body.autumn .message .cont {
+			color: #6E352C;
+		}
+		
+		body.parrot .color0 {
+			background-color: #ded4ca;
+		}
+		
+		body.parrot .color1 {
+			background-color: #f29857;
+		}
+		
+		body.parrot .color2 {
+			background-color: #b30909;
+		}
+		
+		body.parrot .color3 {
+			background-color: #252629;
+		}
+		
+		body.parrot .color4 {
+			background-color: #253d59;
+		}
+		
+		body.parrot .color5 {
+			background-color: #425e6e;
+		}
+		
+		body.parrot .message .bg {
+			background: #f29857;
+		}
+		
+		body.parrot #data {
+			color: #252629;
+		}
+		
+		body.parrot a.btn {
+			background: #252629;
+			color: #f29857;
+		}
+		
+		body.parrot .message .cont {
+			color: #252629;
+		}
+		
+		body.simple .color0 {
+			background-color: blue;
+		}
+		
+		body.simple .color1 {
+			background-color: red;
+		}
+		
+		body.simple .color2 {
+			background-color: green;
+		}
+		
+		body.simple .color3 {
+			background-color: yellow;
+		}
+		
+		body.simple .color4 {
+			background-color: pink;
+		}
+		
+		body.simple .color5 {
+			background-color: purple;
+		}
+		
+		body.simple .message .bg {
+			opacity: 1;
+			background: white;
+		}
+		
+		body.simple #data {
+			color: black;
+		}
+		
+		body.simple a.btn {
+			background: gray;
+			border: 1px solid black;
+			color: black;
+		}
+		
+		body.simple .message .cont {
+			color: black;
+		}
+		
 		body {
 			font-weight: bold;
 			font-family: "Helvetica Neue", Arial, sans-serif;
@@ -46,20 +212,21 @@
 		#data {
 			display: inline-block;
 			width: 100%;
-			color: #6E352C;
 			margin-bottom: 10px;
 			padding-left: 5px;
 		}
 		
-		#data a {
+		#data a.btn {
 			display: block;
 			float: left;
-			background: #6E352C;
-			color: #E3C598;
+			margin-right: 10px;
+		}
+		
+		a.btn {
+			display: inline-block;
 			text-decoration: none;
 			padding: 5px;
 			border-radius: 5px;
-			margin-right: 10px;
 		}
 		
 		#turn {
@@ -91,7 +258,6 @@
 			position: absolute;
 			width: 100%;
 			height: 100%;
-			background: #E3C598;
 			opacity: 0.5;
 			left:0;
 			top:0;
@@ -103,27 +269,17 @@
 			left:50%;
 			top:50%;
 			z-index: 300;
-			color: #6E352C;
 			text-align: center;
-		}
-		
-		.message a {
-			display: inline-block;
-			background: #6E352C;
-			color: #E3C598;
-			text-decoration: none;
-			padding: 5px;
-			border-radius: 5px;
 		}
 		
 		</style>
 	</head>
-	<body>
+	<body class="autumn">
 		<div id="content">
 			<div id="interactive">
 				<div id="data">
-					<a href="#" class="newgame">new game</a>
-					<a href="#" id="helpBtn">help</a>
+					<a href="#" class="newgame btn">new game</a>
+					<a href="#" class="btn" id="helpBtn">help</a>
 					<div id="turn"></div>
 					<!--div id="best">Best: n/a</div-->
 				</div>	
@@ -131,11 +287,20 @@
 			</div>
 			<div id="board-container">
 				<div id="board"></div>
-				<div id="win" class="message"><div class="bg"></div><div class="cont" style="width: 202px; height: 50px; margin-left: -101px; margin-top: -25px;">Congratulations! You won!<br/><a href="#" class="newgame">new game</a></div></div>
-				<div id="loss" class="message"><div class="bg"></div><div class="cont" style="width: 88px; height: 50px; margin-left: -44px; margin-top: -25px;">You lost.<br/><a href="#" class="newgame">new game</a></div></div>
-				<div id="helpMsg" class="message"><div class="bg"></div><div class="cont" style="width: 254px; height: 214px; margin-left: -127px; margin-top: -107px;"><p>Using the buttons above, change the color of the field in the top-left corner.</p><p>The goal is to fill the entire board with only one color in 25 turns or less</p><p><a href="#" class="msgclose">ok</a></p></div></div>
+				<div id="win" class="message"><div class="bg"></div><div class="cont" style="width: 202px; height: 50px; margin-left: -101px; margin-top: -25px;">Congratulations! You won!<br/><a href="#" class="newgame btn">new game</a></div></div>
+				<div id="loss" class="message"><div class="bg"></div><div class="cont" style="width: 88px; height: 50px; margin-left: -44px; margin-top: -25px;">You lost.<br/><a href="#" class="newgame btn">new game</a></div></div>
+				<div id="helpMsg" class="message"><div class="bg"></div><div class="cont" style="width: 254px; height: 214px; margin-left: -127px; margin-top: -107px;"><p>Using the buttons above, change the color of the field in the top-left corner.</p><p>The goal is to fill the entire board with only one color in 25 turns or less</p><p><a href="#" class="msgclose btn">ok</a></p></div></div>
 			</div>
 			<p>Original: <a href="http://floodit.appspot.com/">floodit.appspot.com</a></p>
+			<p>
+				<label for="schemeSelect">Color scheme:</label>
+				<select id="schemeSelect">
+					<option value="autumn">autumn</option>
+					<option value="sea">sea</option>
+					<option value="parrot">parrot</option>
+					<option value="simple">simple</option>
+				</select>
+			</p>
 		</div>
 		
 		<script>
@@ -144,24 +309,26 @@
 				turn: 0
 			},
 				maxTurns = 25,
-				colors = ['#6E352C', '#CF5230', '#F59A44', '#E3C598', '#8A6E64', '#6E612F'];
-				//controlSize = 30,
-				//fieldSize = 30;
+				numColors = 6,
+				boardSize = 14,
+				arrSize = boardSize*boardSize;
 		
 			var renderBoard = function (board) {
 				var $board = $('#board'),
-					size = board.length,
-					fieldSize = Math.floor($board.width() / 14);
+					fieldSize = Math.floor($board.width() / boardSize);
 				
 				$board.empty();
 				
-				for (var x = 0; x < size; x++) {
-					for (var y = 0; y < size; y++) {
-						$board.append($('<div>')
-							.css('background-color', colors[board[x][y].color])
-							.css('width', fieldSize + 'px')
-							.css('height', fieldSize + 'px'));
+				for (var i = 0; i < arrSize; i++) {
+					var $div = $('<div>', { 'class' : 'color' + board[i].color })
+									.css('width', fieldSize + 'px')
+									.css('height', fieldSize + 'px');
+					
+					if (i % (boardSize - 1) == 0) {
+						$div.css('clear', 'right');
 					}
+					
+					$board.append($div);
 				}
 			}
 			
@@ -176,17 +343,15 @@
 		
 			var unvisitAllAndCheckWin = function (board) {
 				var size = board.length,
-					color = board[0][0].color,
+					color = board[0].color,
 					won = true;
 					
-				for (var x = 0; x < size; x++) {
-					for (var y = 0; y < size; y++) {
-						if (won && board[x][y].color != color) {
-							won = false;
-						} 
-					
-						board[x][y].visited = false;
-					}
+				for (var i = 0; i < arrSize; i++) {
+					if (won && board[i].color != color) {
+						won = false;
+					} 
+				
+					board[i].visited = false;
 				}
 				
 				if (won) {
@@ -196,52 +361,106 @@
 			}
 			
 			var initRandomBoard = function () {
-				var board = [];
-			
-				for (var x = 0; x < 14; x++) {
-					var row = [];
-					for (var y = 0; y < 14; y++) {
-						row.push({
+				var board = [],
+					colorPartition = Math.floor(arrSize/numColors),
+					remainderColor = Math.floor(Math.random() * numColors);
+					
+				for (var cI = 0; cI < numColors; cI++) {
+					if (cI == remainderColor) {
+						continue;
+					}
+				
+					for (var pI = 0; pI < colorPartition; pI++) {
+						board.push({
 							visited: false,
-							color: Math.floor(Math.random() * 6)
+							color: cI
 						});
 					}
-					
-					board.push(row);
+				}
+				
+				for (var rI = board.length; rI < arrSize; rI++) {
+					board.push({
+							visited: false,
+							color: remainderColor
+						});
+				}
+				
+				for (var i = 0; i < arrSize; i++) {
+					var j = Math.floor(Math.random() * i),
+						bi = board[i],
+						bj = board[j];
+						
+					board[i] = bj;
+					board[j] = bi;
 				}
 				
 				return board;
 			}
 		
-			var setFieldColor = function (board, x, y, newColor) {
-				var currentColor = board[x][y].color,
-					size = board.length,
-					adjacent = [[x-1, y], [x+1, y], [x, y-1], [x, y+1]];
+			var setFieldColor = function (board, fI, newColor) {
+				var currentColor = board[fI].color,
+					adjacent = [fI - 1, fI + 1, fI - boardSize, fI + boardSize];
 					
-				board[x][y].visited = true;
+				board[fI].visited = true;
 				
 				for (var i = 0; i < adjacent.length; i++) {
-					var a = adjacent[i];
-					if (a[0] < 0 || a[0] > size - 1 || a[1] < 0 || a[1] > size - 1) {
+					if (fI % boardSize == 0 && i == 0) {
 						continue;
 					}
 					
-					var adjField = board[a[0]][a[1]];
+					if (fI % (boardSize-1) == 0 && fI != 0 && i == 1) {
+						continue;
+					}
+				
+					var a = adjacent[i];
+									
+					if (a < 0 || a >= arrSize) {
+						continue;
+					}
+					
+					var adjField = board[a];
+					if (adjField == null) {
+						console.log(a);
+					}
+					
 					if (adjField.visited || adjField.color != currentColor) {
 						continue;
 					}
 					
-					setFieldColor(board, a[0], a[1], newColor);
+					setFieldColor(board, a, newColor);
 				}
 				
-				board[x][y].color = newColor;
+				board[fI].color = newColor;
 			} 
+			
+			var setBodyClass = function (c) {
+				var $b = $('body');
+			
+				$('#schemeSelect').children().each(function (i, el) {
+					var v = $(el).attr('value');
+					$b.removeClass(v);
+				});
+				
+				$b.addClass(c);
+				
+				document.cookie = 'schema=' + c;
+			}
 					
 			$(document).ready(function() {
 				var board = initRandomBoard(),
 					$board = $('#board'),
 					$controls = $('#controls'),
-					$turn = $('#turn');
+					$turn = $('#turn'),
+					cookie = document.cookie,
+					schemaMatch = cookie.match(/schema=(.+?)(;|$)/),
+					schema = schemaMatch ? schemaMatch[1] : 'autumn';
+					
+				setBodyClass(schema);
+					
+				$('#schemeSelect').change(function (e) {
+					var $t = $(e.currentTarget);						
+					setBodyClass($t.val());
+				});
 					
 				$('.newgame').click(function(e) {
 					e.preventDefault();
@@ -279,9 +498,8 @@
 				
 					var controlSize = Math.floor($controls.width() / 6) - 10;
 					
-					for (var i = 0; i < colors.length; i++) {			
-						var $a = $('<a>', { 'href':'#' })
-							.css('background-color', colors[i])
+					for (var i = 0; i < numColors; i++) {			
+						var $a = $('<a>', { 'href':'#', 'class' : 'color' + i })
 							.css('width', controlSize + 'px')
 							.css('height', controlSize + 'px')
 							.data('cIndex', i)
@@ -292,14 +510,14 @@
 								}
 								
 								var cIndex = $(e.currentTarget).data('cIndex');
-								if (cIndex == board[0][0].color) {
+								if (cIndex == board[0].color) {
 									return;
 								}
 								
 								state.turn++;
 								$turn.text(state.turn + '/' + maxTurns);
 								
-								setFieldColor(board, 0, 0, cIndex);
+								setFieldColor(board, 0, cIndex);
 								renderBoard(board);
 								unvisitAllAndCheckWin(board);
 								
