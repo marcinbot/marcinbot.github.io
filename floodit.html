@@ -281,7 +281,7 @@
 					<a href="#" class="newgame btn">new game</a>
 					<a href="#" class="btn" id="helpBtn">help</a>
 					<div id="turn"></div>
-					<!--div id="best">Best: n/a</div-->
+					<div id="best">best: <span id="bestVal">n/a<span></div>
 				</div>	
 				<div id="controls"></div>
 			</div>
@@ -311,7 +311,10 @@
 				maxTurns = 25,
 				numColors = 6,
 				boardSize = 14,
-				arrSize = boardSize*boardSize;
+				arrSize = boardSize*boardSize,
+				cookie = document.cookie,
+				bestScoreMatch = cookie.match(/best=(.+?)(;|$)/),
+				bestScore = bestScoreMatch ? bestScoreMatch[1] : 'n/a';
 		
 			var renderBoard = function (board) {
 				var $board = $('#board'),
@@ -351,6 +354,12 @@
 				}
 				
 				if (won) {
+					var b = Number(bestScore);
+					if (isNaN(b) || b < state.turn) {
+						$('#bestVal').text(state.turn);
+						setCookie('best', state.turn);
+					}
+				
 					showMessage($('#win'));
 					state.over = true;
 				}
@@ -439,11 +448,15 @@
 				
 				$b.addClass(c);
 				
+				setCookie('schema', c);
+			}
+			
+			var setCookie = function (name, value) {
 				var d = new Date();
 				d.setTime(d.getTime() + (63072000000));
 				var expires = "expires="+d.toGMTString();
 				
-				document.cookie = 'schema=' + c + ';' + expires;
+				document.cookie = name + '=' + value + ';' + expires;
 			}
 					
 			$(document).ready(function() {
@@ -451,9 +464,10 @@
 					$board = $('#board'),
 					$controls = $('#controls'),
 					$turn = $('#turn'),
-					cookie = document.cookie,
 					schemaMatch = cookie.match(/schema=(.+?)(;|$)/),
 					schema = schemaMatch ? schemaMatch[1] : 'autumn';
+					
+				$('#bestVal').text(bestScore);
 				
 				$('#schemeSelect').val(schema)
 				setBodyClass(schema);
