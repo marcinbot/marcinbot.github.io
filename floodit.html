@@ -355,7 +355,7 @@
 				
 				if (won) {
 					var b = Number(bestScore);
-					if (isNaN(b) || b < state.turn) {
+					if (isNaN(b) || state.turn < b) {
 						$('#bestVal').text(state.turn);
 						setCookie('best', state.turn);
 					}
