@@ -439,7 +439,11 @@
 				
 				$b.addClass(c);
 				
-				document.cookie = 'schema=' + c;
+				var d = new Date();
+				d.setTime(d.getTime() + (63072000000));
+				var expires = "expires="+d.toGMTString();
+				
+				document.cookie = 'schema=' + c + ';' + expires;
 			}
 					
 			$(document).ready(function() {
