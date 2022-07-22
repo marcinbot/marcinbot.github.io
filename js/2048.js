@@ -1,13 +1,13 @@
 /*
  * Bot for http://gabrielecirulli.github.io/2048/
- * Usage: Add this as a bookmark: 
- * javascript:(function(){var s=document.createElement("script");s.src="http://both00z.github.io/js/2048.js";document.getElementsByTagName('head')[0].appendChild(s);s.addEventListener('load',function(e){solve(4,5,2);},false);}());
+ * Usage: Add this as a bookmark:
+ * javascript:(function(){let s=document.createElement("script");s.src="http://marcinbot.github.io/js/2048.js";document.getElementsByTagName('head')[0].appendChild(s);s.addEventListener('load',function(e){solve(4,5,2);},false);}());
  * On the game page, click the bookmark.
  * Tested on Chrome
  */
 
-var getNextBoard = function (currentBoard, dir) {
-	var board = copyBoard(currentBoard);
+const getNextBoard = function (currentBoard, dir) {
+	let board = copyBoard(currentBoard);
 
 	switch (dir) {
 		case 'left':
@@ -16,24 +16,22 @@ var getNextBoard = function (currentBoard, dir) {
 			return moveRight(board);
 		case 'up':
 			return moveUp(board);
-			break;
 		case 'down':
 			return moveDown(board);
-			break;
 	}
-	
-	return board;
-}
 
-var moveLeft = function (board) {
-	var x, y, moveTo,
+	return board;
+};
+
+const moveLeft = function (board) {
+	let x, y, moveTo, merged,
 		size = board.length;
-		
+
 	for (y = 0; y < size; y++) {
 		moveTo = -1;
 		x = 0;
 		merged = -1;
-		
+
 		while (x < size) {
 			if (moveTo == -1 && board[x][y] == 0) {
 				moveTo = x;
@@ -52,17 +50,17 @@ var moveLeft = function (board) {
 		}
 	}
 	return board;
-}
+};
 
-var moveRight = function (board) {
-	var x, y, moveTo,
+const moveRight = function (board) {
+	let x, y, moveTo, merged,
 		size = board.length;
-	
+
 	for (y = 0; y < size; y++) {
-		moveTo = -1;		
+		moveTo = -1;
 		x = size - 1;
 		merged = -1;
-		
+
 		while (x >= 0) {
 			if (moveTo == -1 && board[x][y] == 0) {
 				moveTo = x;
@@ -80,19 +78,19 @@ var moveRight = function (board) {
 			x--;
 		}
 	}
-	
-	return board;
-}
 
-var moveUp = function (board) {
-	var x, y, moveTo,
+	return board;
+};
+
+const moveUp = function (board) {
+	let x, y, moveTo, merged,
 		size = board.length;
-	
+
 	for (x = 0; x < size; x++) {
 		moveTo = -1;
 		y = 0;
 		merged = -1;
-		
+
 		while (y < size) {
 			if (moveTo == -1 && board[x][y] == 0) {
 				moveTo = y;
@@ -110,19 +108,19 @@ var moveUp = function (board) {
 			y++;
 		}
 	}
-	
-	return board;
-}
 
-var moveDown = function (board) {
-	var x, y, moveTo,
+	return board;
+};
+
+const moveDown = function (board) {
+	let x, y, moveTo, merged,
 		size = board.length;
-	
+
 	for (x = 0; x < size; x++) {
 		moveTo = -1;
 		y = size - 1;
 		merged = -1;
-		
+
 		while (y >= 0) {
 			if (moveTo == -1 && board[x][y] == 0) {
 				moveTo = y;
@@ -140,143 +138,184 @@ var moveDown = function (board) {
 			y--;
 		}
 	}
-	
+
 	return board;
-}
+};
 
-var copyBoard = function(board) {
-	var size = board.length,
-		result = new Array(size);
-	for (var i = 0; i < size; i++) {
-		result[i] = new Array(size);
-		for (var j = 0; j < size; j++) {
-			result[i][j] = board[i][j];
-		}
-	}
-	
-	return result;
-}
+const copyBoard = function(board) {
+	return board.map( ( arr ) => [ ...arr ] );
+};
 
-var getEmptyBoard = function (size) {
-	var board = new Array(size);
-	for (var i = 0; i < size; i++) {
-		board[i] = new Array(size);
-		for (var j = 0; j < size; j++) {
-			board[i][j] = 0;
-		}
+const getEmptyBoard = function (size) {
+	let board = [];
+	for (let i = 0; i < size; i++) {
+		board.push(Array(size).fill(0));
 	}
-	
+
 	return board;
-}
+};
 
-var evaluateBoard = function (board) {
-	var count = 0;
+const getChainLength = function ( board, x, y, prev, visited, stack ) {
+	if ( x < 0 || y < 0 || x >= board.length || y >= board.length || visited[x][y] ) {
+		return 0;
+	}
 
-	for (var i in board){
-		for (var j in board[i]){
-			if (board[i][j]) count += 1;
+	const [ stackTop, ...newStack ] = stack;
+	const current = board[x][y];
+	if ( ! current || current > prev || current !== stackTop ) {
+		return 0;
+	}
+
+	const newVisited = copyBoard( visited );
+	newVisited[x][y] = 1;
+
+	const left = getChainLength( board, x - 1, y, current, newVisited, newStack );
+	const right = getChainLength( board, x + 1, y, current, newVisited, newStack );
+	const top = getChainLength( board, x, y - 1, current, newVisited, newStack );
+	const bottom = getChainLength( board, x, y + 1, current, newVisited, newStack );
+
+	return 1 + Math.max( left, right, top, bottom );
+};
+
+const evaluateBoard = function (board) {
+	const size = board.length;
+	const values = [];
+	let tileSum = 0;
+	let emptyCount = 0;
+	let maxValue = -1;
+	let maxValueDistToCorner, maxX, maxY;
+
+	for (let x in board){
+		for (let y in board[x]){
+			let val = board[x][y];
+			if ( val === 0 ) {
+				emptyCount++;
+				continue;
+			}
+
+			tileSum += val;
+			values.push( val );
+
+			const distToCorner = Math.sqrt( Math.pow( size - x, 2 ) + Math.pow( -y, 2 ) );
+
+			if ( val > maxValue || ( val === maxValue && distToCorner < maxValueDistToCorner ) ) {
+				maxValue = val;
+				maxValueDistToCorner = distToCorner;
+				maxX = Number( x );
+				maxY = Number( y );
+			}
 		}
 	}
-	
-	return Math.pow(board.length, 2) - count;
-}
 
-var scrapeBoard = function (size) {
-	var board = getEmptyBoard(size);
-	var children = document.getElementsByClassName('tile-container')[0].children;
-	
-	for (var i = 0; i < children.length; i++) {
-		var el = children[i],
+	values.sort( ( a, b ) => b - a );
+	const chainLength = getChainLength( board, maxX, maxY, maxValue + 1, getEmptyBoard( size ), values );
+
+	const nonEmptyCount = size * size - emptyCount;
+
+	const score = maxValueDistToCorner * 10000 + chainLength * 1000 + emptyCount * 100 + tileSum / nonEmptyCount;
+	return score;
+};
+
+const scrapeBoard = function (size) {
+	let board = getEmptyBoard(size);
+	let children = document.getElementsByClassName('tile-container')[0].children;
+
+	for (let i = 0; i < children.length; i++) {
+		let el = children[i],
 			cls = el.className,
 			val = cls.match(/tile-(\d+)/)[1],
 			coords = cls.match(/tile-position-(\d+)-(\d+)/);
-			
+
 		board[Number(coords[1])-1][Number(coords[2])-1] = Number(val);
 	}
-	
+
 	return board;
-}
+};
 
-var areEqual = function (b1, b2) {
-	var size = b1.length;
-	for (var x = 0; x < size; x++) {
-		for (var y = 0; y < size; y++) {
-			if (b1[x][y] != b2[x][y]) return false;
-		}
-	}
-	return true;
-}
+const areEqual = function (b1, b2) {
+	return b1.every( ( row, x ) => {
+		return row.every( ( val, y ) => {
+			return val === b2[x][y];
+		} );
+	} );
+};
 
-var getRandomBoards = function (board) {
-	var size = board.length,
+const getRandomBoards = function (board) {
+	let size = board.length,
 		result = [],
 		emptyCoords = [],
 		possibleVals = [2, 4],
 		x, y;
-	
+
 	for (x = 0; x < size; x++) {
 		for (y = 0; y < size; y++) {
-			if (board[x][y] == 0) emptyCoords.push([x, y]);
+			if (board[x][y] == 0) {
+				emptyCoords.push([x, y]);
+			}
 		}
 	}
-	
-	if (!emptyCoords.length)
+
+	if (!emptyCoords.length) {
 		return [];
-	
-	for (var j in possibleVals) {
-		var val = possibleVals[j];
-		
-		for (var i in emptyCoords) {
-			var coords = emptyCoords[i];
-			var newBoard = copyBoard(board);
+	}
+
+	for (let j in possibleVals) {
+		const val = possibleVals[j];
+
+		for (let i in emptyCoords) {
+			const coords = emptyCoords[i];
+			const newBoard = copyBoard(board);
 			newBoard[coords[0]][coords[1]] = val;
 			result.push(newBoard);
 		}
 	}
-	
-	return result;
-}
 
-var evaluateMove = function (board, current, maxLookAhead, maxRandomPredict) {
-	if (current == maxLookAhead )
+	return result;
+};
+
+const evaluateMove = function (board, current, maxLookAhead, maxRandomPredict) {
+	if (current == maxLookAhead ) {
 		return 0;
-	
-	var weight = evaluateBoard(board);
-	var dirs = ['left','right','up','down'];
-	var max = -1;
-	var maxDir = null;
-	
-	var possibleBoards;
+	}
+
+	let weight = evaluateBoard(board);
+	let dirs = ['left','right','up','down'];
+	let max = -1;
+
+	let possibleBoards;
 	if (current <= maxRandomPredict) { //predict possible boards only on the first step
 		possibleBoards = getRandomBoards(board);
 	} else {
 		possibleBoards = [board];
 	}
-	
-	for (var i in dirs){
-		var dir = dirs[i];
-		var nextW = 0;
-		
-		for (var bI in possibleBoards)
+
+	for (let i in dirs){
+		let dir = dirs[i];
+		let nextW = 0;
+
+		for (let bI in possibleBoards)
 		{
-			var possibleBoard = possibleBoards[bI];			
-			var nextBoard = getNextBoard(possibleBoard, dir);
-			
-			if (areEqual(board, nextBoard))
+			let possibleBoard = possibleBoards[bI];
+			let nextBoard = getNextBoard(possibleBoard, dir);
+
+			if (areEqual(board, nextBoard)) {
 				continue;
-				
-			nextW += evaluateMove(nextBoard, current + 1, maxLookAhead, maxRandomPredict);				
+			}
+
+			nextW += evaluateMove(nextBoard, current + 1, maxLookAhead, maxRandomPredict);
 		}
-		
-		if (nextW > max)
+
+		if (nextW > max) {
 			max = nextW;
+		}
 	}
-	
-	if (max == -1)
+
+	if (max == -1) {
 		return 0;
-	
+	}
+
 	return max + weight;
-}
+};
 
 /*
  * Main entry point
@@ -284,39 +323,47 @@ var evaluateMove = function (board, current, maxLookAhead, maxRandomPredict) {
  * @maxLookAhead - how many steps to look ahead before making a move (default: 5)
  * @maxRandomPredict - how many steps ahead should take random tile into account (default: 1) - can affect performance
  */
-var solve = function (size, maxLookAhead, maxRandomPredict) {
-	if (!size) size = 4;
-	if (!maxLookAhead) maxLookAhead = 3;
-	if (!maxRandomPredict) maxRandomPredict = 1;
+const solve = function (size, maxLookAhead, maxRandomPredict) {
+	if (!size) {
+		size = 4;
+	}
+	if (!maxLookAhead) {
+		maxLookAhead = 3;
+	}
+	if (!maxRandomPredict) {
+		maxRandomPredict = 1;
+	}
 
 	setTimeout(function () {
-		var board = scrapeBoard(size);
-		var dirs = ['left','right','up','down'];
-		var max = -1;
-		var maxDir = null;
-		
-		for (var i in dirs){
-			var dir = dirs[i];
-			var nextBoard = getNextBoard(board, dir);
-			
-			if (areEqual(board, nextBoard))
+		let board = scrapeBoard(size);
+		let dirs = ['left','right','up','down'];
+		let max = -1;
+		let maxDir = null;
+
+		for (let i in dirs){
+			let dir = dirs[i];
+			let nextBoard = getNextBoard(board, dir);
+
+			if (areEqual(board, nextBoard)) {
 				continue;
-				
-			var nextW = evaluateMove(nextBoard, 1, maxLookAhead, maxRandomPredict);
-			if (nextW == -1)
+			}
+
+			let nextW = evaluateMove(nextBoard, 1, maxLookAhead, maxRandomPredict);
+			if (nextW == -1) {
 				continue;
-				
+			}
+
 			if (nextW > max)
 			{
 				max = nextW;
 				maxDir = dir;
 			}
 		}
-		
+
 		if (maxDir) {
-			var e = new Event('keydown');
+			let e = new Event('keydown');
 			e.initEvent('keydown', true, true);
-			
+
 			switch (maxDir){
 				case 'left':
 					e.which = 37;
@@ -331,11 +378,13 @@ var solve = function (size, maxLookAhead, maxRandomPredict) {
 					e.which = 40;
 					break;
 			}
-			
+
 			document.body.dispatchEvent(e);
 			solve(size, maxLookAhead, maxRandomPredict);
 		} else {
 			console.log('no more moves?');
 		}
 	}, 500);
-}
+};
+
+window.solve = solve;
